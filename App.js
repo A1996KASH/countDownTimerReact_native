@@ -93,6 +93,8 @@ export default class App extends Component {
             style={{ height: 40, width: 300, borderColor: 'gray', borderWidth: 1, color: '#fff' }}
             onChangeText={(time) => this.setTime(time)}
             value={this.props.time}
+            placeholder='Enter Number of Minutes'
+            placeholderTextColor='#fff'
           />
         </View>
         <View style={styles.button}>

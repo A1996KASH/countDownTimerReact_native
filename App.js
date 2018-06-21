@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
+import Sound from 'react-native-sound';
 import { Platform, StyleSheet, Text, View, TextInput, Button, Vibration } from 'react-native';
-
-import TimerCountdown from 'react-native-timer-countdown'
-
+import TimerCountdown from 'react-native-timer-countdown';
+var whoosh = new Sound('http://www.slspencer.com/Sounds/1048.mp3', Sound.MAIN_BUNDLE, (error) => {
+  if (error) {
+    console.log('failed to load the sound', error);
+    return;
+  }
+  // loaded successfully
+  console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
+});
 
 export default class App extends Component {
+
   state = {
     showTimer: false,
     time: null,
     showISTTime: false,
     currentTime: null
   }
+
 
   start = () => {
     this.setState(previousState => {
@@ -21,12 +30,33 @@ export default class App extends Component {
     });
   }
   finish = () => {
+
+    // Play the sound with an onEnd callback
+    whoosh.play((success) => {
+      if (success) {
+        console.log('successfully finished playing');
+      } else {
+        console.log('playback failed due to audio decoding errors');
+        // reset the player to its uninitialized state (android only)
+        // this is the only option to recover after an error occured and use the player again
+        whoosh.reset();
+      }
+    });
+    whoosh.setNumberOfLoops(-1);
+
+    setTimeout(() => {
+      whoosh.stop(() => {
+        // Note: If you want to play a sound after stopping and rewinding it,
+        // it is important to call play() in a callback.
+        // whoosh.play();
+      });
+    }, 10000)
     Vibration.vibrate(10000);
     this.setState(previousState => {
       return {
         showTimer: !previousState.showTimer,
         showISTTime: true,
-        currentTime:new Date(new Date().getTime() + 1000).toLocaleTimeString()
+        currentTime: new Date(new Date().getTime() + 1000).toLocaleTimeString()
 
       };
     });
@@ -51,7 +81,7 @@ export default class App extends Component {
 
     }
     if (this.state.showISTTime) {
-      time = <Text style={{color:'#fff',fontSize:30}}>{this.state.currentTime}</Text>
+      time = <Text style={{ color: '#fff', fontSize: 30 }}>{this.state.currentTime}</Text>
     }
     return (
       <View style={styles.container}>
@@ -77,8 +107,8 @@ export default class App extends Component {
         <View>
           {timer}
         </View>
-       
-          {time}
+
+        {time}
 
       </View>
     );

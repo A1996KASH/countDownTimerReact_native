@@ -14,13 +14,14 @@ var whoosh = new Sound('http://www.slspencer.com/Sounds/1048.mp3', Sound.MAIN_BU
 export default class App extends Component {
 
   state = {
-    showTimer: false,
-    time: null,
-    showISTTime: false,
-    currentTime: null
+    showTimer: false,//Toggle to Show CountDown Timer
+    time: null, //Number of seconds for which timer will run
+    showISTTime: false, // Toggle to Show Time after the finish of CountDown
+    currentTime: null //current IST Time 
   }
 
 
+  //Function to handle onPress Start Button
   start = () => {
     this.setState(previousState => {
       return {
@@ -29,6 +30,8 @@ export default class App extends Component {
       };
     });
   }
+
+  //Function run on End of Timer plays Vibrations and Sound for 10 seconds
   finish = () => {
 
     // Play the sound with an onEnd callback
@@ -42,16 +45,18 @@ export default class App extends Component {
         whoosh.reset();
       }
     });
-    whoosh.setNumberOfLoops(-1);
+    whoosh.setNumberOfLoops(-1);//palys sound in loop
 
+    //Stop Sound after 10 Seconds
     setTimeout(() => {
       whoosh.stop(() => {
-        // Note: If you want to play a sound after stopping and rewinding it,
-        // it is important to call play() in a callback.
-        // whoosh.play();
       });
     }, 10000)
+
+    //Palys Vibration for 10 Seconds Vibration.vibrate(DURATION)
     Vibration.vibrate(10000);
+
+    //set value of state
     this.setState(previousState => {
       return {
         showTimer: !previousState.showTimer,
@@ -61,12 +66,15 @@ export default class App extends Component {
       };
     });
   }
+
+  //Set number of milliseconds from user entered minutes
   setTime = (time) => {
     var milliseconds = time * 60000;
     this.setState(previousState => {
       return { time: milliseconds };
     });
   }
+
   render() {
     let timer = null;
     let time = null;
